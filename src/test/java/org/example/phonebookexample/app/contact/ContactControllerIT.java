@@ -1,6 +1,8 @@
 package org.example.phonebookexample.app.contact;
 
 import com.openpojo.random.RandomFactory;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -32,10 +34,21 @@ public class ContactControllerIT
     @Test
     public void fetchAllContacts() throws Exception
     {
-        Mockito.when(contactRepository.findAll()).thenReturn(generatedContacts());
+        int size = 100;
+        Mockito.when(contactRepository.findAll()).thenReturn(generatedContacts(size));
 
         mvc.perform(MockMvcRequestBuilders.get("/api/contacts").accept(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$", IsCollectionWithSize.hasSize(size)));
+    }
+
+    @Test
+    public void fetchAllContactsNoneFound() throws Exception
+    {
+        Mockito.when(contactRepository.findAll()).thenReturn(new ArrayList<>());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/contacts").accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -48,7 +61,17 @@ public class ContactControllerIT
         });
 
         mvc.perform(MockMvcRequestBuilders.get("/api/contact/1").accept(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.number", Matchers.is(1)));
+    }
+
+    @Test
+    public void fetchContactNotFound() throws Exception
+    {
+        Mockito.when(contactRepository.findOne(Mockito.anyLong())).thenReturn(null);
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/contact/1").accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -61,13 +84,14 @@ public class ContactControllerIT
         });
 
         mvc.perform(MockMvcRequestBuilders.post("/api/contact", new Contact())
-            .accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
+            .accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.number", Matchers.notNullValue()));
     }
 
-    private List<Contact> generatedContacts()
+    private List<Contact> generatedContacts(int capacity)
     {
-        List<Contact> contacts = new ArrayList<>(100);
-        for (int i = 0; i < 100; i++)
+        List<Contact> contacts = new ArrayList<>(capacity);
+        for (int i = 0; i < capacity; i++)
         {
             Contact contact = new Contact();
             contact.setNumber(RandomFactory.getRandomValue(Long.class));
