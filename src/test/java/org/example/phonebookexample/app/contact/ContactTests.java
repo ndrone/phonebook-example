@@ -9,7 +9,6 @@ import com.openpojo.reflection.impl.PojoClassFactory;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.rule.impl.*;
-import com.openpojo.validation.test.impl.BusinessIdentityTester;
 import com.openpojo.validation.test.impl.DefaultValuesNullTester;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
@@ -35,9 +34,7 @@ public class ContactTests
             .with(new GetterMustExistRule(), new NoPrimitivesRule(), new NoPublicFieldsRule(),
                 new SerializableMustHaveSerialVersionUIDRule(), new SetterMustExistRule())
             // Testers
-            .with(new DefaultValuesNullTester(), new GetterTester(), new SetterTester(),
-                new BusinessIdentityTester())
-            .build();
+            .with(new DefaultValuesNullTester(), new GetterTester(), new SetterTester()).build();
 
         validator.validate(contactPojo);
     }
