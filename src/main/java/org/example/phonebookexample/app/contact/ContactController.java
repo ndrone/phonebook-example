@@ -46,11 +46,11 @@ public class ContactController
 
     @RequestMapping(value = "/contact/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Contact fetchContact(@PathVariable("id") String id)
+    public Contact fetchContact(@PathVariable("id") Long id)
     {
         log.info("Fetching contact");
         log.debug("Fetching contact with id: {}", id);
-        Contact contact = contactRepository.findOne(Long.valueOf(id));
+        Contact contact = contactRepository.findOne(id);
         log.debug("Found contact {}", contact);
         if (contact == null)
         {
@@ -66,5 +66,14 @@ public class ContactController
         log.info("Saving contact");
         log.debug("Saving contact: {}", contact);
         return contactRepository.save(contact);
+    }
+
+    @RequestMapping(value = "/contact/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteContact(@PathVariable("id") Long id) throws Exception
+    {
+        log.info("Deleting contact");
+        log.debug("Deleting Contact: {}", id);
+        contactRepository.delete(id);
     }
 }

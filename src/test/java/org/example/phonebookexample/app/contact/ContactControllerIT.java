@@ -88,6 +88,14 @@ public class ContactControllerIT
             .andExpect(MockMvcResultMatchers.jsonPath("$.number", Matchers.notNullValue()));
     }
 
+    @Test
+    public void deleteContact() throws Exception
+    {
+        mvc.perform(
+            MockMvcRequestBuilders.delete("/api/contact/1").accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
     private List<Contact> generatedContacts(int capacity)
     {
         List<Contact> contacts = new ArrayList<>(capacity);
