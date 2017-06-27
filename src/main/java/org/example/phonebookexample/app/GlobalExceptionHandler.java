@@ -33,4 +33,12 @@ public class GlobalExceptionHandler
         log.error("Error: {}", e);
         return new ErrorMessage(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ResourceNotFoundException resourceNotFoundException(ResourceNotFoundException e)
+    {
+        return e;
+    }
 }
