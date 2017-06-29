@@ -1,26 +1,34 @@
 package org.example.phonebookexample.app.contact;
 
 import org.example.phonebookexample.app.ResourceNotFoundException;
+import org.example.phonebookexample.app.SearchOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Nicholas Drone on 6/12/17.
  */
-@Controller
 @RequestMapping("/api")
 public class ContactController
 {
-    private final Logger log = LoggerFactory.getLogger(ContactController.class);
+    private static final int        KEY_INDEX       = 1;
+    private static final int        OPERATION_INDEX = 2;
+    private static final int        VALUE_INDEX     = 3;
+
+    private static final String     SEPARATOR       = ",";
+
+    private final Logger            log             = LoggerFactory
+        .getLogger(ContactController.class);
+
+    private final Pattern           pattern         = Pattern.compile("(\\w+?)"
+        + SearchOperation.operationCaptureRegex() + "(\\w+?)" + SEPARATOR);
 
     private final ContactRepository contactRepository;
 
@@ -32,7 +40,7 @@ public class ContactController
 
     @RequestMapping(value = "/contacts", method = RequestMethod.GET)
     @ResponseBody
-    public List<Contact> fetchAllContacts()
+    public List<Contact> fetchAll()
     {
         log.info("Fetching all contacts.");
         List<Contact> contacts = contactRepository.findAll();
@@ -44,9 +52,30 @@ public class ContactController
         return contacts;
     }
 
+    @RequestMapping(value = "/contacts", method = RequestMethod.GET, params = "search")
+    @ResponseBody
+    public List<Contact> search(@RequestParam(value = "search") String search)
+    {
+        log.info("Search with params: {}", search);
+
+        ContactSpecificationBuilder builder = new ContactSpecificationBuilder();
+        Matcher matcher = pattern.matcher(search
+            + SEPARATOR);
+        while (matcher.find())
+        {
+            log.debug("Key: {} operation: {} value: {}", matcher.group(KEY_INDEX),
+                matcher.group(OPERATION_INDEX), matcher.group(VALUE_INDEX));
+            builder.with(matcher.group(KEY_INDEX),
+                SearchOperation.fromString(matcher.group(OPERATION_INDEX)),
+                matcher.group(VALUE_INDEX));
+        }
+
+        return contactRepository.findAll(builder.build());
+    }
+
     @RequestMapping(value = "/contact/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Contact fetchContact(@PathVariable("id") Long id)
+    public Contact fetch(@PathVariable("id") Long id)
     {
         log.info("Fetching contact");
         log.debug("Fetching contact with id: {}", id);
@@ -61,7 +90,7 @@ public class ContactController
 
     @RequestMapping(value = "/contact", method = RequestMethod.POST)
     @ResponseBody
-    public Contact saveContact(Contact contact)
+    public Contact save(Contact contact)
     {
         log.info("Saving contact");
         log.debug("Saving contact: {}", contact);
@@ -70,7 +99,7 @@ public class ContactController
 
     @RequestMapping(value = "/contact/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteContact(@PathVariable("id") Long id) throws Exception
+    public void delete(@PathVariable("id") Long id) throws Exception
     {
         log.info("Deleting contact");
         log.debug("Deleting Contact: {}", id);
