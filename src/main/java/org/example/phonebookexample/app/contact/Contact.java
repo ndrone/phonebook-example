@@ -2,56 +2,59 @@ package org.example.phonebookexample.app.contact;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * @author Nicholas Drone on 6/12/17.
  */
 @Entity
+@Table(name = "CONTACT")
 public class Contact implements Serializable
 {
     private static final long serialVersionUID = 6782082928144550811L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "NUMBER")
     private Long              number;
 
-    @Column(length = 6)
+    @Column(name = "TITLE", length = 10)
     private String            title;
 
-    @Column(name = "givenname", length = 20)
+    @Column(name = "GIVENNAME", length = 50)
     private String            firstname;
 
-    @Column(length = 1)
+    @Column(name = "MIDDLEINITIAL", length = 1)
     private String            middleinitial;
 
-    @Column(name = "surname", length = 23)
+    @Column(name = "SURNAME", length = 50)
     private String            lastname;
 
-    @Column(length = 100)
+    @Column(name = "STREETADDRESS", length = 100)
     private String            streetaddress;
 
-    @Column(length = 100)
+    @Column(name = "CITY", length = 100)
     private String            city;
 
-    @Column(length = 22)
+    @Column(name = "STATE", length = 75)
     private String            state;
 
-    @Column(length = 15)
+    @Column(name = "ZIPCODE", length = 20)
     private String            zipcode;
 
-    @Column(length = 100)
+    @Column(name = "EMAILADDRESS", length = 100)
     private String            emailaddress;
 
-    @Column(length = 25)
+    @Column(name = "TELEPHONENUMBER", length = 50)
     private String            telephonenumber;
 
-    @Column(length = 10)
-    private String            birthday;
+    @Column(name = "BIRTHDAY")
+    private LocalDate         birthday;
 
-    @Column(length = 70)
+    @Column(name = "OCCUPATION", length = 100)
     private String            occupation;
 
-    @Column(length = 70)
+    @Column(name = "COMPANY", length = 100)
     private String            company;
 
     public Long getNumber()
@@ -164,12 +167,12 @@ public class Contact implements Serializable
         this.telephonenumber = telephonenumber;
     }
 
-    public String getBirthday()
+    public LocalDate getBirthday()
     {
         return birthday;
     }
 
-    public void setBirthday(final String birthday)
+    public void setBirthday(final LocalDate birthday)
     {
         this.birthday = birthday;
     }
