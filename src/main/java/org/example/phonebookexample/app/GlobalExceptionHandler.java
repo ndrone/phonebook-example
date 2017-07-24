@@ -1,5 +1,6 @@
 package org.example.phonebookexample.app;
 
+import javassist.tools.web.BadHttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,5 +41,13 @@ public class GlobalExceptionHandler
     public ResourceNotFoundException resourceNotFoundException(ResourceNotFoundException e)
     {
         return e;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public BadHttpRequest badHttpRequest(BadHttpRequest badHttpRequest)
+    {
+        return badHttpRequest;
     }
 }

@@ -36,7 +36,6 @@ class ContactSpecificationBuilder
 
     Specification<Contact> build()
     {
-        // TODO: move this to controller to throw a bad request message
         Assert.notEmpty(params, "Search Parameters must not be empty");
 
         Iterator<SearchCriteria> iterator = params.iterator();
@@ -47,5 +46,10 @@ class ContactSpecificationBuilder
             spec = spec.and(new ContactSpecification(iterator.next()));
         }
         return spec;
+    }
+
+    boolean hasSearchParameters()
+    {
+        return params.size() > 0;
     }
 }

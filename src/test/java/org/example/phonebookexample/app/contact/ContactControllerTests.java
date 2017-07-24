@@ -114,4 +114,12 @@ public class ContactControllerTests extends PhonebookExampleApplicationTests
                 LocalDate.parse(birthday, ApplicationUtils.FORMATTER),
                 Matchers.greaterThan(LocalDate.ofEpochDay(0))));
     }
+
+    @Test
+    public void searchBadRequest() throws Exception
+    {
+        mvc.perform(MockMvcRequestBuilders.get(API_CONTACTS).param(SEARCH, "")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
