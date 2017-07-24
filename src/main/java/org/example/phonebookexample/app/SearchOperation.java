@@ -8,7 +8,7 @@ import java.util.Optional;
  */
 public enum SearchOperation
 {
-        LIKE(':'), EQUALS('=');
+        LIKE(':'), EQUALS('='), LESS_THAN('<'), GREATER_THAN('>');
 
     private static final String OR = "|";
 
@@ -23,7 +23,8 @@ public enum SearchOperation
     public static String operationCaptureRegex()
     {
         return "("
-            + LIKE.operation + OR + EQUALS.operation + ")";
+            + LIKE.operation + OR + EQUALS.operation + OR + LESS_THAN.operation + OR
+            + GREATER_THAN.operation + ")";
     }
 
     public static SearchOperation fromString(String operation)

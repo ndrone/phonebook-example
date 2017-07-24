@@ -16,10 +16,10 @@ import javax.persistence.criteria.Root;
  */
 public class ContactSpecificationTests
 {
-    Root            root            = Mockito.mock(Root.class);
-    Path            path            = Mockito.mock(Path.class);
-    CriteriaQuery   criteriaQuery   = Mockito.mock(CriteriaQuery.class);
-    CriteriaBuilder criteriaBuilder = Mockito.mock(CriteriaBuilder.class);
+    private Root            root            = Mockito.mock(Root.class);
+    private Path            path            = Mockito.mock(Path.class);
+    private CriteriaQuery   criteriaQuery   = Mockito.mock(CriteriaQuery.class);
+    private CriteriaBuilder criteriaBuilder = Mockito.mock(CriteriaBuilder.class);
 
     @Before
     public void setUp()
@@ -52,12 +52,38 @@ public class ContactSpecificationTests
     public void equalsPredicate()
     {
         ContactSpecification specification = new ContactSpecification(
-                new SearchCriteria("firstname", SearchOperation.EQUALS, "tom"));
+            new SearchCriteria("firstname", SearchOperation.EQUALS, "tom"));
 
         specification.toPredicate(root, criteriaQuery, criteriaBuilder);
 
         Mockito.verify(root, Mockito.times(1)).get(Mockito.eq("firstname"));
         Mockito.verify(criteriaBuilder, Mockito.times(1)).equal(Mockito.eq(path),
-                Mockito.eq("tom"));
+            Mockito.eq("tom"));
+    }
+
+    @Test
+    public void lessThanPredicate()
+    {
+        ContactSpecification specification = new ContactSpecification(
+            new SearchCriteria("birthday", SearchOperation.LESS_THAN, "07/23/2017"));
+
+        specification.toPredicate(root, criteriaQuery, criteriaBuilder);
+
+        Mockito.verify(root, Mockito.times(1)).get(Mockito.eq("birthday"));
+        Mockito.verify(criteriaBuilder, Mockito.times(1)).lessThan(Mockito.eq(path),
+            Mockito.eq("07/23/2017"));
+    }
+
+    @Test
+    public void greaterThanPredicate()
+    {
+        ContactSpecification specification = new ContactSpecification(
+            new SearchCriteria("birthday", SearchOperation.GREATER_THAN, "01/01/1970"));
+
+        specification.toPredicate(root, criteriaQuery, criteriaBuilder);
+
+        Mockito.verify(root, Mockito.times(1)).get(Mockito.eq("birthday"));
+        Mockito.verify(criteriaBuilder, Mockito.times(1)).greaterThan(Mockito.eq(path),
+            Mockito.eq("01/01/1970"));
     }
 }

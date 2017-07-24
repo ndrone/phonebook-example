@@ -13,7 +13,7 @@ public class SearchCriteria
 
     public SearchCriteria(String key, SearchOperation operation, Object value)
     {
-        Assert.notNull(key, "key must not be null");
+        Assert.hasText(key, "key must not be null");
         this.key = key;
         Assert.notNull(operation, "operation must not be null");
         this.operation = operation;

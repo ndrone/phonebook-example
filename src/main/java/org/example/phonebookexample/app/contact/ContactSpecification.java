@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 
 /**
  * @author Nicholas Drone on 6/28/17.
@@ -16,7 +17,7 @@ public class ContactSpecification implements Specification<Contact>
 {
     private static final String SQL_LIKE = "%";
 
-    private SearchCriteria searchCriteria;
+    private SearchCriteria      searchCriteria;
 
     ContactSpecification(SearchCriteria searchCriteria)
     {
@@ -24,6 +25,7 @@ public class ContactSpecification implements Specification<Contact>
         this.searchCriteria = searchCriteria;
     }
 
+    //TODO: Fix casting objects
     @Override
     public Predicate toPredicate(Root<Contact> root, CriteriaQuery<?> criteriaQuery,
         CriteriaBuilder criteriaBuilder)
@@ -32,14 +34,18 @@ public class ContactSpecification implements Specification<Contact>
         {
             case LIKE:
                 return criteriaBuilder.like(root.get(searchCriteria.getKey()), SQL_LIKE
-                        + searchCriteria.getValue() + SQL_LIKE);
+                    + searchCriteria.getValue() + SQL_LIKE);
             case EQUALS:
                 return criteriaBuilder.equal(root.get(searchCriteria.getKey()),
-                        searchCriteria.getValue());
-
+                    searchCriteria.getValue());
+            case LESS_THAN:
+                return criteriaBuilder.lessThan(root.get(searchCriteria.getKey()),
+                        (LocalDate) searchCriteria.getValue());
+            case GREATER_THAN:
+                return criteriaBuilder.greaterThan(root.get(searchCriteria.getKey()),
+                        (LocalDate) searchCriteria.getValue());
             default:
                 return null;
-
         }
     }
 }

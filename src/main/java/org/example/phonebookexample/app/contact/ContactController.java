@@ -23,12 +23,15 @@ public class ContactController
     private static final int        VALUE_INDEX     = 3;
 
     private static final String     SEPARATOR       = ",";
+    private static final String     WORD            = "\\w+?";
+    private static final String     DATE            = "\\d{2}/\\d{2}/\\d{4}";
 
     private final Logger            log             = LoggerFactory
         .getLogger(ContactController.class);
 
-    private final Pattern           pattern         = Pattern.compile("(\\w+?)"
-        + SearchOperation.operationCaptureRegex() + "(\\w+?)" + SEPARATOR);
+    private final Pattern           pattern         = Pattern.compile("("
+        + WORD + ")" + SearchOperation.operationCaptureRegex() + "(" + WORD + "|" + DATE + ")"
+        + SEPARATOR);
 
     private final ContactRepository contactRepository;
 
@@ -63,7 +66,7 @@ public class ContactController
             + SEPARATOR);
         while (matcher.find())
         {
-            log.debug("Key: {} operation: {} value: {}", matcher.group(KEY_INDEX),
+            log.debug("Key: {} operation: '{}' value: {}", matcher.group(KEY_INDEX),
                 matcher.group(OPERATION_INDEX), matcher.group(VALUE_INDEX));
             builder.with(matcher.group(KEY_INDEX),
                 SearchOperation.fromString(matcher.group(OPERATION_INDEX)),
