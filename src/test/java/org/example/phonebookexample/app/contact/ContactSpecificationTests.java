@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 
 /**
  * @author Nicholas Drone on 6/29/17.
@@ -64,26 +65,28 @@ public class ContactSpecificationTests
     @Test
     public void lessThanPredicate()
     {
+        LocalDate localDate = LocalDate.of(2017, 7, 23);
         ContactSpecification specification = new ContactSpecification(
-            new SearchCriteria("birthday", SearchOperation.LESS_THAN, "07/23/2017"));
+            new SearchCriteria("birthday", SearchOperation.LESS_THAN, localDate));
 
         specification.toPredicate(root, criteriaQuery, criteriaBuilder);
 
         Mockito.verify(root, Mockito.times(1)).get(Mockito.eq("birthday"));
         Mockito.verify(criteriaBuilder, Mockito.times(1)).lessThan(Mockito.eq(path),
-            Mockito.eq("07/23/2017"));
+            Mockito.eq(localDate));
     }
 
     @Test
     public void greaterThanPredicate()
     {
+        LocalDate localDate = LocalDate.ofEpochDay(0);
         ContactSpecification specification = new ContactSpecification(
-            new SearchCriteria("birthday", SearchOperation.GREATER_THAN, "01/01/1970"));
+            new SearchCriteria("birthday", SearchOperation.GREATER_THAN, localDate));
 
         specification.toPredicate(root, criteriaQuery, criteriaBuilder);
 
         Mockito.verify(root, Mockito.times(1)).get(Mockito.eq("birthday"));
         Mockito.verify(criteriaBuilder, Mockito.times(1)).greaterThan(Mockito.eq(path),
-            Mockito.eq("01/01/1970"));
+            Mockito.eq(localDate));
     }
 }
