@@ -1,6 +1,6 @@
 package org.example.phonebookexample.app.contact;
 
-import javassist.tools.web.BadHttpRequest;
+import org.example.phonebookexample.app.BadRequestException;
 import org.example.phonebookexample.app.ResourceNotFoundException;
 import org.example.phonebookexample.app.SearchOperation;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class ContactController
 
     @RequestMapping(value = "/contacts", method = RequestMethod.GET, params = "search")
     @ResponseBody
-    public List<Contact> search(@RequestParam(value = "search") String search) throws BadHttpRequest
+    public List<Contact> search(@RequestParam(value = "search") String search)
     {
         log.info("Search with params: {}", search);
 
@@ -76,7 +76,7 @@ public class ContactController
 
         if (!builder.hasSearchParameters())
         {
-            throw new BadHttpRequest(new Exception("Incorrect search parameters"));
+            throw new BadRequestException("Incorrect search parameters");
         }
 
         return contactRepository.findAll(builder.build());
